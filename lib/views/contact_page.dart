@@ -1,4 +1,5 @@
 import 'package:b3_dev/theme.dart';
+import 'package:b3_dev/views/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,7 +36,7 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Layout( child:
       appBar: AppBar(title: const Text('Contact')),
       body: Center(
         child: SingleChildScrollView(
@@ -50,6 +51,7 @@ class _ContactPageState extends State<ContactPage> {
                     TextFormField(
                       controller: _nameController,
                       decoration: _buildInputDecoration('Nom'),
+                      style: const TextStyle(color: primaryColor),
                       validator: (value) =>
                           value!.isEmpty ? 'Entrez un nom' : null,
                     ),
@@ -57,6 +59,7 @@ class _ContactPageState extends State<ContactPage> {
                     TextFormField(
                       controller: _emailController,
                       decoration: _buildInputDecoration('Email'),
+                      style: const TextStyle(color: primaryColor),
                       validator: (value) =>
                           value!.isEmpty ? 'Entrez un email' : null,
                     ),
@@ -64,6 +67,7 @@ class _ContactPageState extends State<ContactPage> {
                     TextFormField(
                       controller: _messageController,
                       decoration: _buildInputDecoration('Message'),
+                      style: const TextStyle(color: primaryColor),
                       maxLines: 4,
                       validator: (value) =>
                           value!.isEmpty ? 'Entrez un message' : null,
