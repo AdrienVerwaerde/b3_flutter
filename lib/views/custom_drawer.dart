@@ -1,3 +1,4 @@
+import 'package:b3_dev/views/theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:b3_dev/theme.dart';
@@ -5,6 +6,8 @@ import 'package:b3_dev/views/about_page.dart';
 import 'package:b3_dev/views/contact_page.dart';
 import 'package:b3_dev/views/articles_page.dart';
 import 'package:b3_dev/views/home_page.dart';
+import 'package:provider/provider.dart';
+import '../../controllers/theme_controller.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -69,6 +72,7 @@ class CustomDrawer extends StatelessWidget {
             label: 'Articles',
             destination: const ArticlesPage(),
           ),
+          const ThemeSwitcher(),
         ],
       ),
     );

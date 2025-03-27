@@ -1,10 +1,16 @@
+import 'package:b3_dev/controllers/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:b3_dev/views/home_page.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // Le plugin permettant de switcher de theme
+    ChangeNotifierProvider(
+      create: (_) => ThemeController(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,14 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // On appelle le controller du theme pour envelopper l'app
+    final themeController = Provider.of<ThemeController>(context);
+
     return MaterialApp(
       title: 'App B3 MDS',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 9, 9, 216)),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false, 
+      // Themes existant
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      // Récupère le theme actuel
+      themeMode: themeController.currentTheme,
+      debugShowCheckedModeBanner: false,
       home: const HomePage(),
     );
   }
