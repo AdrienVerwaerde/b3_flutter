@@ -3,6 +3,7 @@ import 'package:b3_dev/views/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// Utilisation de url_launcher, qui permet de lancer des apps externes, pour lancer l'app de mails
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactPage extends StatefulWidget {
@@ -21,9 +22,13 @@ class _ContactPageState extends State<ContactPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
-  // Méthode pour envoyer le contenu du message par mail
+  // Méthode pour envoyer le contenu du message par mail.
+  // Si l'utilisateur a une application mail configurée, cette fonction lance l'application avec le sujet et le corps du message renseignés. Sinon, un message d'erreur est affiché.
   Future<void> _sendEmail(String name, String email, String message) async {
-    final subject = Uri.encodeComponent('Nouveau message de contact');
+    // Fonction asynchrone car elle déclenche un plugin, et on utilise void car elle ne renvoie rien
+
+    // Structure du mail que l'on va recevoir
+    final subject = Uri.encodeComponent('Nouveau message'); // sujet du mail
     final body = Uri.encodeComponent('''
 Nom : $name
 Email : $email
@@ -32,12 +37,14 @@ Message :
 $message
 ''');
 
+    // On définit l'adresse à laquelle envoyer le mail
     final uri = Uri.parse(
         'mailto:verwaerdeadrien@gmail.com?subject=$subject&body=$body');
 
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
+      // message snack si l'app mail ne s'ouvre pas
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Impossible d\'ouvrir l\'application mail.')),
@@ -61,7 +68,7 @@ $message
               style: TextStyle(color: secondaryColor)),
         ),
       );
-
+      // on vide les controllers pour pouvoir accueillir d'autres données
       _nameController.clear();
       _emailController.clear();
       _messageController.clear();
@@ -91,6 +98,7 @@ $message
       title: 'Contact',
       child: Center(
         child: SingleChildScrollView(
+          // Box dans laquelle on peut scroller sur un seul et unique widget
           padding: const EdgeInsets.all(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -131,7 +139,7 @@ $message
                       onPressed: _sendMessage,
                       icon: const Icon(Icons.send, color: primaryColor),
                       label: Text(
-                        'Envoyer',
+                        'ENVOYER',
                         style: GoogleFonts.gemunuLibre(
                           fontSize: 16,
                           color: primaryColor,

@@ -11,8 +11,10 @@ class ArticleController {
   /// Si l'appel API  échoue, une exception est levée.
   static Future<List<Article>> fetchArticles() async {
     // final permet de recevoir la valeur une seule fois sans être réassignée
-    final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
+    final response =
+        await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
 
+    //  Si l'appel est bon, on récupère les données et on boucle dessus pour les afficher en tant qu'objet Article en accord avec le Model
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
       return jsonData.map((json) => Article.fromJson(json)).toList();
