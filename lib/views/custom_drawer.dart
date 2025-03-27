@@ -31,12 +31,15 @@ class CustomDrawer extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              child: Text(
-                'Menu',
-                style: GoogleFonts.gemunuLibre(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              child: Align(
+                alignment:Alignment.centerLeft,
+                child: Text(
+                  'Menu',
+                  style: GoogleFonts.gemunuLibre(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -71,6 +74,11 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
+  /// Builds a drawer item that, when tapped, navigates to [destination] after
+  /// popping the drawer.
+  ///
+  /// The item is a [ListTile] with a colored icon and a colored title.
+  ///
   Widget _buildDrawerItem(BuildContext context,
       {required IconData icon,
       required String label,

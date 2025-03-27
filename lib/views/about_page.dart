@@ -1,3 +1,4 @@
+import 'package:b3_dev/views/layout.dart';
 import 'package:flutter/material.dart';
 
 class AboutPage extends StatelessWidget {
@@ -5,9 +6,9 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('À Propos')),
-      body: Center(
+    return Layout(
+      title: 'À Propos',
+      child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

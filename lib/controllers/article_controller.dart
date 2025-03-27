@@ -3,7 +3,14 @@ import 'package:http/http.dart' as http;
 import '../models/article.dart';
 
 class ArticleController {
+  /// Récupère la liste des articles en les téléchargeant depuis l'API.
+  ///
+  /// L'API utilisée est celle de [https://jsonplaceholder.typicode.com/posts]
+  /// et renvoie une liste de [Article]s.
+  ///
+  /// Si l'appel API  échoue, une exception est levée.
   static Future<List<Article>> fetchArticles() async {
+    // final permet de recevoir la valeur une seule fois sans être réassignée
     final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
 
     if (response.statusCode == 200) {

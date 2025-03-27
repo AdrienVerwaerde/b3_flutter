@@ -10,35 +10,49 @@ class ContactPage extends StatefulWidget {
   State<ContactPage> createState() => _ContactPageState();
 }
 
+
 class _ContactPageState extends State<ContactPage> {
-  final _formKey = GlobalKey<FormState>();
+  // key fournie par Dart permettant de controler et valider le formulaire
+  final _formKey = GlobalKey<FormState>(); 
+
+  // Chaque controller permet de gérer un input et avoir accès aux données entrées
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
+// Snackbar pour confirmer l'envoi du message
   void _sendMessage() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Message envoyé !')),
+        const SnackBar(
+          
+          content: Text('Message envoyé !', style:TextStyle(color: secondaryColor)),),
       );
     }
   }
 
+  // Les styles pour les inputs du formulaire
   InputDecoration _buildInputDecoration(String label) {
     return InputDecoration(
       labelText: label,
+      labelStyle: const TextStyle(color: primaryColor),
+      floatingLabelStyle: const TextStyle(color: secondaryColor),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
       ),
+      focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: secondaryColor, width: 2),
+    ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Layout( child:
-      appBar: AppBar(title: const Text('Contact')),
-      body: Center(
+    return Layout(title: 'Contact',
+    child:
+      Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Padding(
@@ -52,6 +66,7 @@ class _ContactPageState extends State<ContactPage> {
                       controller: _nameController,
                       decoration: _buildInputDecoration('Nom'),
                       style: const TextStyle(color: primaryColor),
+                      cursorColor: primaryColor,
                       validator: (value) =>
                           value!.isEmpty ? 'Entrez un nom' : null,
                     ),

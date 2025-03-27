@@ -7,7 +7,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Layout(
+    return Layout(
+      title: 'Home',
       child: const Center(
         child: Text(
           'Bienvenue sur l\'application Flutter MVC !',
