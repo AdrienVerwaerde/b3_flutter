@@ -52,6 +52,7 @@ $message
     }
   }
 
+
   void _sendMessage() {
     // On récupère les donnée stockées dans les controllers définis plus haut
     if (_formKey.currentState!.validate()) {

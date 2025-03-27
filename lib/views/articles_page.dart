@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../controllers/article_controller.dart';
 import '../models/article.dart';
 import 'article_detail_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ArticlesPage extends StatefulWidget {
   const ArticlesPage({Key? key}) : super(key: key);
@@ -13,17 +14,27 @@ class ArticlesPage extends StatefulWidget {
 }
 
 class _ArticlesPageState extends State<ArticlesPage> {
-  // On défini une variable non nulle qui sera initialisée plus tard. Elle contient la liste des objets Article.
-  // Comme ça on s'assure de récupérer les données avant de chercher à les utiliser
   late Future<List<Article>> _articlesFuture;
 
+// On définit la première page à 0 et le nombre d'articles à 10 max, on utilise int car les valeurs sont des nombres
+  int _currentPage = 0;
+  final int _articlesPerPage = 10;
+
   @override
-  /// Initialize the state of the widget by fetching the list of articles.
-  ///
-  /// See [ArticleController.fetchArticles] for more information.
   void initState() {
     super.initState();
+    // Appel du controller adéquat
     _articlesFuture = ArticleController.fetchArticles();
+  }
+
+  // Calcul classique de pagination où on compare le nombre d'articles total au nombre d'articles par page pour déterminer le nombre de pages
+  List<Article> _getPaginatedArticles(List<Article> allArticles) {
+    final start = _currentPage * _articlesPerPage;
+    final end = (_currentPage + 1) * _articlesPerPage;
+    return allArticles.sublist(
+      start,
+      end > allArticles.length ? allArticles.length : end,
+    );
   }
 
   @override
@@ -34,31 +45,79 @@ class _ArticlesPageState extends State<ArticlesPage> {
         child: FutureBuilder<List<Article>>(
           future: _articlesFuture,
           builder: (context, snapshot) {
+            // Loader le temps de charger les articles
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const CircularProgressIndicator(color: secondaryColor);
             } else if (snapshot.hasError) {
-              return Center(child: Text('Erreur : ${snapshot.error}'));
+              return Text('Erreur : ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('Aucun article trouvé.'));
+              return const Text('Aucun article trouvé.');
             } else {
-              final articles = snapshot.data!;
-              return ListView.builder(
-                itemCount: articles.length,
-                itemBuilder: (context, index) {
-                  final article = articles[index];
-                  return ListTile(
-                    title: Text(article.title, style:const TextStyle(color: primaryColor)),
-                  
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ArticleDetailPage(article: article),
+              // On recupere la liste des articles et on divise le nombre affiché par 10 pour chaque page
+              final allArticles = snapshot.data!;
+              final totalPages = (allArticles.length / _articlesPerPage).ceil();
+              final paginatedArticles = _getPaginatedArticles(allArticles);
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: paginatedArticles.length,
+                      itemBuilder: (context, index) {
+                        final article = paginatedArticles[index];
+                        return ListTile(
+                          title: Text(
+                            article.title,
+                            style: const TextStyle(color: primaryColor),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ArticleDetailPage(article: article),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: secondaryColor),
+                          onPressed: _currentPage > 0
+                              ? () => setState(() => _currentPage--)
+                              : null,
+                          child: Text('PRÉCÉDENT',
+                              style: GoogleFonts.gemunuLibre(
+                          fontSize: 16,
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
-                  );
-                },
+                        ),
+                        ),
+                        const SizedBox(width: 16),
+                        Text('Page ${_currentPage + 1} / $totalPages', style: const TextStyle(color: primaryColor),),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: secondaryColor),
+                          onPressed: (_currentPage + 1) < totalPages
+                              ? () => setState(() => _currentPage++)
+                              : null,
+                          child: const Text('SUIVANT',
+                              style: TextStyle(color: primaryColor)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             }
           },
