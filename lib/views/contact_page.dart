@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactPage extends StatefulWidget {
-  const ContactPage({Key? key}) : super(key: key);
+  const ContactPage({super.key});
 
   @override
   State<ContactPage> createState() => _ContactPageState();
@@ -17,7 +17,9 @@ class _ContactPageState extends State<ContactPage> {
   // key fournie par Dart permettant de controler et valider le formulaire
   final _formKey = GlobalKey<FormState>();
 
-  // Chaque controller permet de gérer un input et avoir accès aux données entrées
+  // Le composant TextEditingController est un controller de Flutter. 
+  // Chaque controller permet de gérer un input et avoir accès aux données entrées.
+  // On définit les controllers de chaque input pour s'y retrouver, leur valeur est vide car on veut pouvoir écrire ce qu'on veut.
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
@@ -28,14 +30,14 @@ class _ContactPageState extends State<ContactPage> {
     // Fonction asynchrone car elle déclenche un plugin, et on utilise void car elle ne renvoie rien
 
     // Structure du mail que l'on va recevoir
-    final subject = Uri.encodeComponent('Nouveau message'); // sujet du mail
+    final subject = Uri.encodeComponent('Données Flutter MVC'); // sujet du mail
     final body = Uri.encodeComponent('''
 Nom : $name
 Email : $email
 
 Message :
 $message
-''');
+'''); // contenu du mail
 
     // On définit l'adresse à laquelle envoyer le mail
     final uri = Uri.parse(
@@ -52,15 +54,16 @@ $message
     }
   }
 
-
+  // Fonction qui valide le formulaire et envoie le mail.
+  // On check si les informations entrées sont valides (non vides) et si c'est le cas la fonction sendEmail est appelée.
   void _sendMessage() {
-    // On récupère les donnée stockées dans les controllers définis plus haut
+    // On récupère les données stockées dans les controllers définis plus haut
     if (_formKey.currentState!.validate()) {
       final name = _nameController.text;
       final email = _emailController.text;
       final message = _messageController.text;
 
-      _sendEmail(name, email, message);
+      _sendEmail(name, email, message); // Fonction pour envoyer le mail, elle prend en paramètres les éléments des inputs.
 
       ScaffoldMessenger.of(context).showSnackBar(
         // Snackbar pour confirmer l'envoi du message
@@ -137,7 +140,7 @@ $message
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: _sendMessage,
+                      onPressed: _sendMessage, // appel de la fonction pour envoyer le mail
                       icon: const Icon(Icons.send, color: primaryColor),
                       label: Text(
                         'ENVOYER',

@@ -6,32 +6,34 @@ import '../models/article.dart';
 import 'article_detail_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ArticlesPage extends StatefulWidget {
-  const ArticlesPage({Key? key}) : super(key: key);
+class ArticlesPage extends StatefulWidget { // Widget avec état car la page doit se mettre à jour lors du changement de page (pagination)
+  const ArticlesPage({super.key});
 
   @override
   State<ArticlesPage> createState() => _ArticlesPageState();
 }
 
 class _ArticlesPageState extends State<ArticlesPage> {
-  late Future<List<Article>> _articlesFuture;
+  late Future<List<Article>> _articlesFuture; // Fonction qui contiendra la liste des articles chargée de manière asynchrone. On utilise "late" car elle est initialisee plus tard
 
-// On définit la première page à 0 et le nombre d'articles à 10 max, on utilise int car les valeurs sont des nombres
+  // Pour paginer les articles, on définit l'indice de la page actuelle (commence à 0)
   int _currentPage = 0;
+  // Puis le nombre d'articles affichés par page
   final int _articlesPerPage = 10;
 
   @override
   void initState() {
     super.initState();
-    // Appel du controller adéquat
+    // On lance la récupération des articles une seule fois à l'initialisation pour éviter que la requète se fasse en boucle
     _articlesFuture = ArticleController.fetchArticles();
   }
 
-  // Calcul classique de pagination où on compare le nombre d'articles total au nombre d'articles par page pour déterminer le nombre de pages
+  /// Fonction qui extrait uniquement les articles correspondant à la page en cours
   List<Article> _getPaginatedArticles(List<Article> allArticles) {
+    // Calcul classique de la pagination : on associe la page actuelle au nombre d'articles par page pour établir le total de pages
     final start = _currentPage * _articlesPerPage;
-    final end = (_currentPage + 1) * _articlesPerPage;
-    return allArticles.sublist(
+    final end = (_currentPage + 1) * _articlesPerPage; // On ajoute +1 car on ne peut pas être en page 0
+    return allArticles.sublist( // Utilise sublist pour découper la liste d'articles entre [start, end)
       start,
       end > allArticles.length ? allArticles.length : end,
     );
@@ -45,21 +47,27 @@ class _ArticlesPageState extends State<ArticlesPage> {
         child: FutureBuilder<List<Article>>(
           future: _articlesFuture,
           builder: (context, snapshot) {
-            // Loader le temps de charger les articles
+            // Affiche un loader pendant que les données sont récupérées
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator(color: secondaryColor);
-            } else if (snapshot.hasError) {
+            }
+            // Affiche un message d'erreur si l'appel API a échoué
+            else if (snapshot.hasError) {
               return Text('Erreur : ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            }
+            // Affiche un message si la liste d'articles est vide
+            else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Text('Aucun article trouvé.');
-            } else {
-              // On recupere la liste des articles et on divise le nombre affiché par 10 pour chaque page
+            }
+            // Si les articles sont bien récupérés on les affiche
+            else {
               final allArticles = snapshot.data!;
               final totalPages = (allArticles.length / _articlesPerPage).ceil();
               final paginatedArticles = _getPaginatedArticles(allArticles);
 
               return Column(
                 children: [
+                  // Liste scrollable des articles visibles sur la page actuelle
                   Expanded(
                     child: ListView.builder(
                       itemCount: paginatedArticles.length,
@@ -70,12 +78,12 @@ class _ArticlesPageState extends State<ArticlesPage> {
                             article.title,
                             style: const TextStyle(color: primaryColor),
                           ),
+                          // Lorsqu'on clique sur un article, on ouvre la page de détails -> article_detail_page
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    ArticleDetailPage(article: article),
+                                builder: (_) => ArticleDetailPage(article: article),
                               ),
                             );
                           },
@@ -83,6 +91,8 @@ class _ArticlesPageState extends State<ArticlesPage> {
                       },
                     ),
                   ),
+
+                  // Pagination : boutons précédent / suivant + numéro de page
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
@@ -90,29 +100,46 @@ class _ArticlesPageState extends State<ArticlesPage> {
                       children: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: secondaryColor),
+                            backgroundColor: secondaryColor,
+                          ),
                           onPressed: _currentPage > 0
                               ? () => setState(() => _currentPage--)
-                              : null,
-                          child: Text('PRÉCÉDENT',
-                              style: GoogleFonts.gemunuLibre(
-                          fontSize: 16,
-                          color: primaryColor,
-                          fontWeight: FontWeight.bold,
+                              : null, // On désactive le bouton Précedent si on est sur la première page
+                          child: Text(
+                            'PRÉCÉDENT',
+                            style: GoogleFonts.gemunuLibre(
+                              fontSize: 16,
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                        ),
-                        ),
+
                         const SizedBox(width: 16),
-                        Text('Page ${_currentPage + 1} / $totalPages', style: const TextStyle(color: primaryColor),),
+
+                        // Affichage du numéro de page
+                        Text(
+                          'Page ${_currentPage + 1} / $totalPages',
+                          style: const TextStyle(color: primaryColor),
+                        ),
+
                         const SizedBox(width: 16),
+
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: secondaryColor),
+                            backgroundColor: secondaryColor,
+                          ),
                           onPressed: (_currentPage + 1) < totalPages
                               ? () => setState(() => _currentPage++)
-                              : null,
-                          child: const Text('SUIVANT',
-                              style: TextStyle(color: primaryColor)),
+                              : null,  // On désactive le bouton Suivant si on est sur la première page
+                          child: Text(
+                            'SUIVANT',
+                            style: GoogleFonts.gemunuLibre(
+                              fontSize: 16,
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
                     ),
