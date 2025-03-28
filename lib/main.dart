@@ -16,8 +16,8 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget { // On utilise un StatelessWidget car cette fonction ne sera jamais modifiée, elle a un but précis qui sera toujours le même et les users ne vont pas intéragir avec.
+  const MyApp({super.key}); // Définir la key est facultatif mais intéressant pour la structure de l'app. On transmet la key du composant au constructor parent, ici StatelessWidget.
 
   @override
   // Fonction qui construit l'arbre des widgets de l'app.

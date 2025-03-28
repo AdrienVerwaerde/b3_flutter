@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // Une simple page qui affiche des infos. Elle est appelée dans un bouton du Drawer pour pouvoir être ouverte
 class AboutPage extends StatelessWidget {
-  const AboutPage({super.key}); // facultatif mais intéressant pour la structure de l'app. On transmet la key du composant au constructor parent, ici StatelessWidget
+  const AboutPage({super.key}); 
 
   @override
   Widget build(BuildContext context) {
